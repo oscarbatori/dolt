@@ -17,6 +17,7 @@ package commands
 import (
 	"context"
 	"fmt"
+	"github.com/liquidata-inc/dolt/go/libraries/events"
 	"os"
 	"path"
 	"path/filepath"
@@ -26,6 +27,7 @@ import (
 	"github.com/liquidata-inc/dolt/go/store/datas"
 
 	"github.com/liquidata-inc/dolt/go/cmd/dolt/cli"
+	eventsapi "github.com/liquidata-inc/dolt/go/gen/proto/dolt/services/eventsapi/v1alpha1"
 	"github.com/liquidata-inc/dolt/go/cmd/dolt/errhand"
 	"github.com/liquidata-inc/dolt/go/libraries/doltcore/dbfactory"
 	"github.com/liquidata-inc/dolt/go/libraries/doltcore/doltdb"
@@ -93,6 +95,11 @@ func Clone(ctx context.Context, commandStr string, args []string, dEnv *env.Dolt
 
 				if verr == nil {
 					verr = cloneRemote(ctx, srcDB, remoteName, branch, dEnv)
+
+					if verr == nil {
+						evt := events.GetEventFromContext(ctx)
+						evt.SetAttribute(eventsapi.AttributeID_ACTIVE_REMOTE_URL, remoteUrl)
+					}
 
 					// Make best effort to delete the directory we created.
 					if verr != nil {

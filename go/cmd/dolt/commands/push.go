@@ -17,6 +17,8 @@ package commands
 import (
 	"context"
 	"fmt"
+	eventsapi "github.com/liquidata-inc/dolt/go/gen/proto/dolt/services/eventsapi/v1alpha1"
+	"github.com/liquidata-inc/dolt/go/libraries/events"
 	"time"
 
 	"github.com/dustin/go-humanize"
@@ -230,6 +232,9 @@ func deleteRemoteBranch(ctx context.Context, toDelete, remoteRef ref.DoltRef, lo
 }
 
 func pushToRemoteBranch(ctx context.Context, srcRef, destRef, remoteRef ref.DoltRef, localDB, remoteDB *doltdb.DoltDB, remote env.Remote) errhand.VerboseError {
+	evt := events.GetEventFromContext(ctx)
+	evt.SetAttribute(eventsapi.AttributeID_ACTIVE_REMOTE_URL, remote.Url)
+
 	cs, _ := doltdb.NewCommitSpec("HEAD", srcRef.GetPath())
 	cm, err := localDB.Resolve(ctx, cs)
 
@@ -238,7 +243,7 @@ func pushToRemoteBranch(ctx context.Context, srcRef, destRef, remoteRef ref.Dolt
 	} else {
 		progChan := make(chan datas.PullProgress, 16)
 		stopChan := make(chan struct{})
-		go progFunc(progChan, stopChan)
+		go progFunc(progChan, stopChan, evt)
 
 		err = actions.Push(ctx, destRef.(ref.BranchRef), remoteRef.(ref.RemoteRef), localDB, remoteDB, cm, progChan)
 
@@ -264,18 +269,37 @@ func pushToRemoteBranch(ctx context.Context, srcRef, destRef, remoteRef ref.Dolt
 	return nil
 }
 
-func progFunc(progChan chan datas.PullProgress, stopChan chan struct{}) {
+func progFunc(progChan chan datas.PullProgress, stopChan chan struct{}, evt *events.Event) {
 	var latest datas.PullProgress
 	last := time.Now().UnixNano() - 1
 	lenPrinted := 0
 	done := false
+
+	timerMetricID := eventsapi.MetricID_DOWNLOAD_MS_ELAPSED
+	counterMetricID := eventsapi.MetricID_BYTES_DOWNLOADED
+
+	if evt.GetClientEventType() == eventsapi.ClientEventType_PUSH {
+		timerMetricID = eventsapi.MetricID_UPLOAD_MS_ELAPSED
+		counterMetricID = eventsapi.MetricID_BYTES_UPLOADED
+	}
+
+	counter := events.NewCounter(counterMetricID)
+	timer := events.NewTimer(timerMetricID)
+
 	for !done {
 		select {
 		case progress, ok := <-progChan:
 			if !ok {
 				done = true
+
+				timer.Stop()
+
+				evt.AddMetric(timer)
+				evt.AddMetric(counter)
 			}
+
 			latest = progress
+			counter.Add(int32(latest.ActualBytes))
 
 		case <-time.After(250 * time.Millisecond):
 			break

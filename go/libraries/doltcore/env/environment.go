@@ -18,6 +18,8 @@ import (
 	"context"
 	"crypto/tls"
 	"fmt"
+	eventsapi "github.com/liquidata-inc/dolt/go/gen/proto/dolt/services/eventsapi/v1alpha1"
+	"github.com/liquidata-inc/dolt/go/libraries/events"
 	"path/filepath"
 	"strings"
 
@@ -578,4 +580,29 @@ func (dEnv *DoltEnv) GetDefaultRemote() (Remote, errhand.VerboseError) {
 // based on current filesys
 func (dEnv *DoltEnv) GetUserHomeDir() (string, error) {
 	return getHomeDir(dEnv.hdp)
+}
+
+// SetStandardEventAttributes sets local remote urls, and current branch name to an evt
+func (dEnv *DoltEnv) SetStandardEventAttributes(evt *events.Event) {
+	if evt != nil {
+		if len(evt.GetAttribute(eventsapi.AttributeID_LOCAL_REMOTE_URLS)) < 1 {
+			remotes, _ := dEnv.GetRemotes()
+
+			if len(remotes) > 0 {
+				urls := make([]string, len(remotes))
+
+				for _, remote := range remotes {
+					urls = append(urls, remote.Url)
+				}
+
+				evt.SetAttribute(eventsapi.AttributeID_LOCAL_REMOTE_URLS, strings.Join(urls[:], " "))
+			}
+		}
+
+		if len(evt.GetAttribute(eventsapi.AttributeID_BRANCH_NAME)) < 1 {
+			if dEnv.RepoState != nil {
+				evt.SetAttribute(eventsapi.AttributeID_BRANCH_NAME, dEnv.RepoState.Head.Ref.GetPath())
+			}
+		}
+	}
 }
