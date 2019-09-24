@@ -16,6 +16,7 @@ package commands
 
 import (
 	"context"
+
 	"github.com/liquidata-inc/dolt/go/cmd/dolt/cli"
 	"github.com/liquidata-inc/dolt/go/cmd/dolt/errhand"
 	eventsapi "github.com/liquidata-inc/dolt/go/gen/proto/dolt/services/eventsapi/v1alpha1"
@@ -161,7 +162,6 @@ func fetchRefSpecs(ctx context.Context, dEnv *env.DoltEnv, rem env.Remote, refSp
 func fetchRemoteBranch(ctx context.Context, rem env.Remote, srcDB, destDB *doltdb.DoltDB, srcRef, destRef ref.DoltRef) errhand.VerboseError {
 	evt := events.GetEventFromContext(ctx)
 	evt.SetAttribute(eventsapi.AttributeID_ACTIVE_REMOTE_URL, rem.Url)
-
 
 	cs, _ := doltdb.NewCommitSpec("HEAD", srcRef.String())
 	cm, err := srcDB.Resolve(ctx, cs)

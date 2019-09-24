@@ -19,8 +19,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	eventsapi "github.com/liquidata-inc/dolt/go/gen/proto/dolt/services/eventsapi/v1alpha1"
-	"github.com/liquidata-inc/dolt/go/libraries/events"
 	"io"
 	"net/http"
 	"net/url"
@@ -32,7 +30,9 @@ import (
 	"github.com/cenkalti/backoff"
 	"github.com/golang/snappy"
 
+	eventsapi "github.com/liquidata-inc/dolt/go/gen/proto/dolt/services/eventsapi/v1alpha1"
 	remotesapi "github.com/liquidata-inc/dolt/go/gen/proto/dolt/services/remotesapi/v1alpha1"
+	"github.com/liquidata-inc/dolt/go/libraries/events"
 	"github.com/liquidata-inc/dolt/go/libraries/utils/iohelp"
 	"github.com/liquidata-inc/dolt/go/store/chunks"
 	"github.com/liquidata-inc/dolt/go/store/hash"

@@ -32,7 +32,7 @@ var (
 	homeDir     = "/home/"
 	dPath       = doltDir
 	evtPath     = eventsDir
-	doltTestDir     = filepath.Join(homeDir, dPath)
+	doltTestDir = filepath.Join(homeDir, dPath)
 	tempEvtsDir = filepath.Join(doltTestDir, evtPath)
 )
 

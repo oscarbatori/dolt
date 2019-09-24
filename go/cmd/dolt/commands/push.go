@@ -17,19 +17,19 @@ package commands
 import (
 	"context"
 	"fmt"
-	eventsapi "github.com/liquidata-inc/dolt/go/gen/proto/dolt/services/eventsapi/v1alpha1"
-	"github.com/liquidata-inc/dolt/go/libraries/events"
 	"time"
 
 	"github.com/dustin/go-humanize"
 
 	"github.com/liquidata-inc/dolt/go/cmd/dolt/cli"
 	"github.com/liquidata-inc/dolt/go/cmd/dolt/errhand"
+	eventsapi "github.com/liquidata-inc/dolt/go/gen/proto/dolt/services/eventsapi/v1alpha1"
 	"github.com/liquidata-inc/dolt/go/libraries/doltcore/doltdb"
 	"github.com/liquidata-inc/dolt/go/libraries/doltcore/env"
 	"github.com/liquidata-inc/dolt/go/libraries/doltcore/env/actions"
 	"github.com/liquidata-inc/dolt/go/libraries/doltcore/ref"
 	"github.com/liquidata-inc/dolt/go/libraries/doltcore/remotestorage"
+	"github.com/liquidata-inc/dolt/go/libraries/events"
 	"github.com/liquidata-inc/dolt/go/libraries/utils/argparser"
 	"github.com/liquidata-inc/dolt/go/libraries/utils/earl"
 	"github.com/liquidata-inc/dolt/go/store/datas"
@@ -275,12 +275,15 @@ func progFunc(progChan chan datas.PullProgress, stopChan chan struct{}, evt *eve
 	lenPrinted := 0
 	done := false
 
-	timerMetricID := eventsapi.MetricID_DOWNLOAD_MS_ELAPSED
-	counterMetricID := eventsapi.MetricID_BYTES_DOWNLOADED
+	var timerMetricID, counterMetricID eventsapi.MetricID
 
-	if evt.GetClientEventType() == eventsapi.ClientEventType_PUSH {
+	switch evt.GetClientEventType() {
+	case eventsapi.ClientEventType_PUSH:
 		timerMetricID = eventsapi.MetricID_UPLOAD_MS_ELAPSED
 		counterMetricID = eventsapi.MetricID_BYTES_UPLOADED
+	default:
+		timerMetricID = eventsapi.MetricID_DOWNLOAD_MS_ELAPSED
+		counterMetricID = eventsapi.MetricID_BYTES_DOWNLOADED
 	}
 
 	counter := events.NewCounter(counterMetricID)

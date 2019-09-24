@@ -263,7 +263,7 @@ func PullWithoutBatching(ctx context.Context, srcDB, sinkDB Database, sourceRef 
 
 // concurrently pull all chunks from this batch that the sink is missing out of the source
 func getChunks(ctx context.Context, srcDB Database, batch hash.HashSlice, sampleSize uint64, sampleCount uint64, updateProgress func(moreDone uint64, moreKnown uint64, moreApproxBytesWritten uint64, actualBytes int)) (map[hash.Hash]*chunks.Chunk, error) {
-neededChunks := map[hash.Hash]*chunks.Chunk{}
+	neededChunks := map[hash.Hash]*chunks.Chunk{}
 	found := make(chan *chunks.Chunk)
 
 	ae := atomicerr.New()

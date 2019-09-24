@@ -85,6 +85,7 @@ type GrpcEmitter struct {
 	client eventsapi.ClientEventsServiceClient
 }
 
+// NewGrpcEmitter creates a new GrpcEmitter
 func NewGrpcEmitter(conn *grpc.ClientConn) *GrpcEmitter {
 	client := eventsapi.NewClientEventsServiceClient(conn)
 	return &GrpcEmitter{client}
