@@ -582,7 +582,8 @@ func (dEnv *DoltEnv) GetUserHomeDir() (string, error) {
 	return getHomeDir(dEnv.hdp)
 }
 
-// SetStandardEventAttributes sets local remote urls, and current branch name to an evt
+// SetStandardEventAttributes sets local remote urls, and current branch as attributes
+// on an Event
 func (dEnv *DoltEnv) SetStandardEventAttributes(evt *events.Event) {
 	if evt != nil {
 		if len(evt.GetAttribute(eventsapi.AttributeID_LOCAL_REMOTE_URLS)) < 1 {
@@ -595,7 +596,9 @@ func (dEnv *DoltEnv) SetStandardEventAttributes(evt *events.Event) {
 					urls = append(urls, remote.Url)
 				}
 
-				evt.SetAttribute(eventsapi.AttributeID_LOCAL_REMOTE_URLS, strings.Join(urls[:], " "))
+				joined := strings.Join(urls[:], " ")
+
+				evt.SetAttribute(eventsapi.AttributeID_LOCAL_REMOTE_URLS, strings.Trim(joined, " "))
 			}
 		}
 

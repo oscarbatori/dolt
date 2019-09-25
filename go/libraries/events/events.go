@@ -96,7 +96,7 @@ func (evt *Event) close() *eventsapi.ClientEvent {
 	return ce
 }
 
-// GetAttribute adds an attribute to the event. This method is thread safe
+// GetAttribute gets an attribute from the Event. This method is thread safe
 func (evt *Event) GetAttribute(attID eventsapi.AttributeID) string {
 	evt.m.Lock()
 	defer evt.m.Unlock()
@@ -108,7 +108,7 @@ func (evt *Event) GetAttribute(attID eventsapi.AttributeID) string {
 	return ""
 }
 
-// GetClientEventType returns a pointer to the Client Event. This method is thread safe
+// GetClientEventType returns the Event's ClientEvent type. This method is thread safe
 func (evt *Event) GetClientEventType() eventsapi.ClientEventType {
 	evt.m.Lock()
 	defer evt.m.Unlock()
