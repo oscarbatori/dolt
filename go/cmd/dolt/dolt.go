@@ -17,6 +17,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/liquidata-inc/dolt/go/libraries/doltcore/dbfactory"
 	"os"
 	"os/exec"
 	"strconv"
@@ -138,7 +139,7 @@ func runMain() int {
 		return 1
 	}
 
-	emitter := events.NewFileEmitter(root)
+	emitter := events.NewFileEmitter(root, dbfactory.DoltDir)
 
 	defer func() {
 		ces := events.GlobalCollector.Close()
