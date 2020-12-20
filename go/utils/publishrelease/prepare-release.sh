@@ -5,7 +5,7 @@ set -o pipefail
 script_dir=$(dirname "$0")
 cd $script_dir
 
-[ ! -z "$1" ] || (echo "Please supply version string as first parameter"; exit 1)
+[ ! -z "$1" ] || (echo "Please supply version string as first param"; exit 1)
 version_str=$1
 
 dolt_cmd_entry_point=../../cmd/dolt/dolt.go
