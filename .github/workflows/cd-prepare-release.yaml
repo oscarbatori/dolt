@@ -19,4 +19,4 @@ jobs:
       - name: Bump Version
         id: prepare_release
         run: |
-          ./go/utils/publishrelease/prepare-release.sh ${}
+          ./go/utils/publishrelease/prepare-release.sh ${{ github.event.inputs.version }}
