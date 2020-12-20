@@ -87,6 +87,7 @@ jobs:
           asset_content_type: text/plain
 
   homebrew-bump:
+    needs: bump-version
     name: Bump Dolt Homebrew formula
     runs-on: ubuntu-latest
     steps:
