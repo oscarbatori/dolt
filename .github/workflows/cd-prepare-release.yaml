@@ -1,0 +1,20 @@
+name: Prepare Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'the tag you want to create, formatted v#.#.#'
+        required: true
+
+jobs:
+  create:
+    name: Pepare Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Prepare Release
+        id: prepare_release
+        run: |
+          ./go/utils/publishrelease/prepare_release ${{ github.event.inputs.version }}
