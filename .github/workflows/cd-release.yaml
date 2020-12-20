@@ -22,7 +22,7 @@ jobs:
           ./go/utils/publishrelease/prepare-release.sh ${{ github.event.inputs.version }}
 
   create-release:
-    needs: publish
+    needs: bump-version
     name: Create Release
     runs-on: ubuntu-latest
     steps:
