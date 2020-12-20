@@ -14,9 +14,9 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      - name: Setup user
-        uses: fregante/setup-git-user@v1
       - name: Bump Version
         id: prepare_release
         run: |
+          git config --global user.name dolt-release-bot
+          git config --global user.email dolt-release-bot@dolthub.com
           ./go/utils/publishrelease/prepare-release.sh ${{ github.event.inputs.version }}
