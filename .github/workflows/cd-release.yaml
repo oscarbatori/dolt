@@ -21,6 +21,22 @@ jobs:
           git config --global user.email dolt-release-bot@dolthub.com
           ./go/utils/publishrelease/prepare-release.sh ${{ github.event.inputs.version }}
 
+  create-pull-request:
+    needs: bump-version
+    name: Create Pull Request
+    runs-on: ubuntu-latest
+    steps:
+    - name: Create Pull Request
+      uses: peter-evans/create-pull-request@v3
+      with:
+        id: create-pr
+        uses: peter-evans/create-pull-request@v3
+        committer: "dolt-release-bot <dolt-release-bot@dolthub.com>"
+        branch: v${{ github.event.inputs.version }}-release
+        base: master
+        title: Version Bump for Dolt v${{ github.event.inputs.version }}
+        body: Simple version bump
+
   create-release:
     needs: bump-version
     name: Create Release
