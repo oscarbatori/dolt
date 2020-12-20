@@ -9,7 +9,8 @@ cd $script_dir
 version_str=$1
 
 dolt_cmd_entry_point="../../cmd/dolt/dolt.go"
-release_branch="$version_str-release"
+release_tag="v$version_str"
+release_branch="$release_tag-release"
 
 echo "Checking out release branch $release_branch"
 git checkout -b $release_branch
@@ -27,7 +28,7 @@ git add $dolt_cmd_entry_point
 git commit -m "Updated version for release of version $version_str"
 
 echo "Creating tag for version $version_str"
-git tag -a $version_str -m "Tag for release of Dolt version $version_str"
+git tag -a "$release_tag" -m "Tag Dolt version $version_str"
 
 echo "Pushing $release_branch"
 git push origin $release_branch

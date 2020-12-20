@@ -14,17 +14,9 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+      - name: Setup user
+        uses: fregante/setup-git-user@v1
       - name: Bump Version
         id: prepare_release
         run: |
-          git checkout -b v${{ github.event.inputs.version }}-release
-          sed -i -e 's/Version = ".*"/Version = "'"${{ github.event.inputs.version }}"'"/' go/cmd/dolt/dolt.go
-
-      - uses: EndBug/add-and-commit@v5
-        with:
-          message: Bumped version to ${{ github.event.inputs.version }} for release
-          branch: v${{ github.event.inputs.version }}-release
-          add: go/cmd/dolt/dolt.go
-          tag: 'v${{ github.event.inputs.version }}'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ./go/utils/publishrelease/prepare-release.sh ${}
