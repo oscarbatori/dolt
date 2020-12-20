@@ -27,10 +27,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Create Pull Request
+      id: create-pr
       uses: peter-evans/create-pull-request@v3
       with:
-        id: create-pr
-        uses: peter-evans/create-pull-request@v3
         committer: "dolt-release-bot <dolt-release-bot@dolthub.com>"
         branch: v${{ github.event.inputs.version }}-release
         base: master
