@@ -9,7 +9,7 @@ on:
 
 jobs:
   bump-version:
-    name: Pepare Release
+    name: Bump Version
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -28,6 +28,10 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+      - name: Checkout release tag
+        run: |
+          git fetch --tags --all
+          git checkout tags/v${{ github.event.inputs.version }} -b v${{ github.event.inputs.version }}
       - name: Build Binaries
         run: |
           go/utils/publishrelease/buildbinaries.sh
@@ -81,3 +85,18 @@ jobs:
           asset_path: go/out/install.sh
           asset_name: install.sh
           asset_content_type: text/plain
+
+  homebrew-bump:
+    name: Bump Dolt Homebrew formula
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create Homebrew PR
+        uses: mislav/bump-homebrew-formula-action@v1
+        with:
+          formula-name: dolt
+          homebrew-tap: Homebrew/homebrew-core
+          base-branch: master
+          download-url: ${{format('https://github.com/dolthub/dolt/archive/v{0}.tar.gz', github.event.inputs.version)}}
+          commit-message: ${{format('dolt v{0}', github.event.inputs.version)}}
+        env:
+          COMMITTER_TOKEN: ${{secrets.HOMEBREW_GITHUB_TOKEN}}
