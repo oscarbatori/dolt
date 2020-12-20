@@ -34,4 +34,4 @@ echo "Pushing $release_branch"
 git push origin $release_branch
 
 echo "Pushing tag for $version_str"
-git push origin $version_str
+git push origin $release_tag
