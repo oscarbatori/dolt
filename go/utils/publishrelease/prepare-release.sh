@@ -8,7 +8,7 @@ cd $script_dir
 [ ! -z "$1" ] || (echo "Please supply version string as first parameter"; exit 1)
 version_str=$1
 
-dolt_cmd_entry_point=../../go/cmd/dolt/dolt.go
+dolt_cmd_entry_point=../../cmd/dolt/dolt.go
 release_branch=release
 
 echo "Checking out release branch"
@@ -17,6 +17,7 @@ git checkout -b $release_branch --track "origin/$release_branch"
 git merge -m "Merging latest master into $release_branch for release $version_str" master
 
 echo "Updating the version to $version"
+echo "script dir is $script_dir"
 sed -i '' -e 's/Version = ".*"/Version = "'"$version_str"'"/' $dolt_cmd_entry_point
 
 echo "Creating commit for $release_branch"
