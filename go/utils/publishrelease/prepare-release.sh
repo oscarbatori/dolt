@@ -15,7 +15,7 @@ release_branch="$release_tag-release"
 echo "Checking out release branch $release_branch"
 git checkout -b $release_branch
 
-echo "Updating the version to $version"
+echo "Updating the version to $version_str"
 # Note this if statement is for cross platform support between Linux/OSX
 if [[ "$OSTYPE" == "darwin"* ]]; then
   sed -i '' -e 's/Version = ".*"/Version = "'"$version_str"'"/' $dolt_cmd_entry_point
@@ -27,11 +27,9 @@ echo "Creating commit for $release_branch"
 git add $dolt_cmd_entry_point
 git commit -m "Updated version for release of version $version_str"
 
-echo "Creating tag for version $version_str"
-git tag -a "$release_tag" -m "Tag Dolt version $version_str"
-
 echo "Pushing $release_branch"
 git push origin $release_branch
 
-echo "Pushing tag for $version_str"
+echo "Creating and pushing tag for version $version_str"
+git tag -a "$release_tag" -m "Tag Dolt version $version_str"
 git push origin $release_tag
