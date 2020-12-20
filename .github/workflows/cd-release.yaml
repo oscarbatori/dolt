@@ -1,12 +1,28 @@
-name: Create Release
+name: Release
 
 on:
-  push:
-    tags:
-      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'SemVer format release tag, i.e. 0.23.4'
+        required: true
 
 jobs:
-  create:
+  bump-version:
+    name: Pepare Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Bump Version
+        id: prepare_release
+        run: |
+          git config --global user.name dolt-release-bot
+          git config --global user.email dolt-release-bot@dolthub.com
+          ./go/utils/publishrelease/prepare-release.sh ${{ github.event.inputs.version }}
+
+  create-release:
+    needs: publish
     name: Create Release
     runs-on: ubuntu-latest
     steps:
