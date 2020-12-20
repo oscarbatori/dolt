@@ -17,4 +17,4 @@ jobs:
       - name: Prepare Release
         id: prepare_release
         run: |
-          ./go/utils/publishrelease/prepare_release ${{ github.event.inputs.version }}
+          ./go/utils/publishrelease/prepare-release.sh ${{ github.event.inputs.version }}
