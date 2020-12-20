@@ -7,7 +7,7 @@ script_dir=$(dirname "$0")
 [ ! -z "$1" ] || (echo "Please supply version string as first parameter"; exit 1)
 version_str=$1
 
-dolt_cmd_entry_point=../go/cmd/dolt/dolt.go
+dolt_cmd_entry_point=../../go/cmd/dolt/dolt.go
 release_branch=release
 
 echo "Checking out release branch"
